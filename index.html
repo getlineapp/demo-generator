@@ -47,6 +47,22 @@
       scroll-behavior: smooth;
     }
 
+    /* Config panel scrollbar */
+    #config-panel::-webkit-scrollbar {
+      width: 4px;
+    }
+    #config-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #config-panel::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+    #config-panel {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
     /* Horizontal scroll containers */
     .hscroll::-webkit-scrollbar {
       height: 0;
@@ -165,7 +181,7 @@
   <main class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 p-6">
 
     <!-- Left: Configurator Panel -->
-    <aside id="config-panel" class="w-full lg:w-[400px] lg:flex-shrink-0 bg-gray-900 rounded-2xl p-6 space-y-6 self-start lg:sticky lg:top-6">
+    <aside id="config-panel" class="w-full lg:w-[400px] lg:flex-shrink-0 bg-gray-900 rounded-2xl p-6 space-y-6 self-start lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
 
       <h2 class="font-epilogue font-bold text-lg text-white">Configuration</h2>
 
