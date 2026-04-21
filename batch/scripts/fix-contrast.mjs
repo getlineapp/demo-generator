@@ -88,16 +88,16 @@ function fixPalette(primary, slug) {
   // Near-white / near-gray-light → keep as-is (looks clean on dark bg)
   const isNearWhite = s < 10 && l > 85;
   if (!isNearWhite) {
-    if (l < 55) l = 65;        // too dark → brighten
+    if (l < 60) l = 72;        // too dark → brighten (higher than before to clear new lighter bg)
     if (l > 88) l = 80;        // too bright → tone down a notch (keep punch)
     if (s < 25 && !isNearWhite) s = 45;  // avoid muddy gray accents
   }
   const fixedPrimary = hslToHex(h, s, l);
 
-  // Background: hue-tinted near-black for brand feel
-  const bg = hslToHex(h, Math.min(s, 70), 6);
+  // Background: hue-tinted dark gray (not pitch-black). Keeps the "app" vibe but lighter.
+  const bg = hslToHex(h, Math.min(s, 45), 22);
   // Text: hue-tinted near-white
-  const text = hslToHex(h, Math.min(s, 25), 92);
+  const text = hslToHex(h, Math.min(s, 25), 94);
 
   return { primary: fixedPrimary, background: bg, text };
 }
