@@ -77,27 +77,42 @@ function contrast(hex1, hex2) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+// Light-mode presets: primary mid-dark, bg near-white, text near-black
+const LIGHT_PRESETS = [
+  { primaryColor: '#e54b6f', backgroundColor: '#fdf7f9', textColor: '#1a0a0f' },
+  { primaryColor: '#3c6fd4', backgroundColor: '#f7f9fd', textColor: '#0a0f1a' },
+  { primaryColor: '#2f9a4a', backgroundColor: '#f7fdf9', textColor: '#0a1a0f' },
+  { primaryColor: '#8647d4', backgroundColor: '#faf7fd', textColor: '#0f0a1a' },
+  { primaryColor: '#d48000', backgroundColor: '#fdfaf5', textColor: '#1a0f0a' },
+];
+
 function fixPalette(primary, slug) {
   if (!primary) {
-    const p = presetForSlug(slug);
+    const p = LIGHT_PRESETS[[...slug].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 0) % LIGHT_PRESETS.length];
     return { primary: p.primaryColor, background: p.backgroundColor, text: p.textColor };
   }
   const hsl = hexToHsl(primary);
   let { h, s, l } = hsl;
 
-  // Near-white / near-gray-light → keep as-is (looks clean on dark bg)
-  const isNearWhite = s < 10 && l > 85;
-  if (!isNearWhite) {
-    if (l < 60) l = 72;        // too dark → brighten (higher than before to clear new lighter bg)
-    if (l > 88) l = 80;        // too bright → tone down a notch (keep punch)
-    if (s < 25 && !isNearWhite) s = 45;  // avoid muddy gray accents
-  }
-  const fixedPrimary = hslToHex(h, s, l);
+  // Light mode rules:
+  // - Primary must contrast against near-white bg → force L into [35, 55]
+  // - Ensure saturation so the brand colour still reads (muddy grays become branded)
+  if (l < 35) l = 45;
+  if (l > 55) l = 50;
+  if (s < 25) s = 60;
 
-  // Background: hue-tinted dark gray (not pitch-black). Keeps the "app" vibe but lighter.
-  const bg = hslToHex(h, Math.min(s, 45), 22);
-  // Text: hue-tinted near-white
-  const text = hslToHex(h, Math.min(s, 25), 94);
+  // Background: very light, barely tinted with the brand hue so it feels branded, not sterile.
+  const bg = hslToHex(h, Math.min(s * 0.15, 10), 97);
+  // Text: near-black, slight hue warm so it feels softer than pure black.
+  const text = hslToHex(h, Math.min(s * 0.3, 20), 12);
+
+  // Hues with naturally high luminance (yellow/green/cyan ≈ 40-200°) can still
+  // fall below WCAG AA on white. Iteratively darken primary until contrast ≥ 3.5.
+  let fixedPrimary = hslToHex(h, s, l);
+  while (contrast(fixedPrimary, bg) < 3.5 && l > 15) {
+    l -= 4;
+    fixedPrimary = hslToHex(h, s, l);
+  }
 
   return { primary: fixedPrimary, background: bg, text };
 }

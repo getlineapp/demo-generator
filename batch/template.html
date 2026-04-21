@@ -197,24 +197,24 @@
         <!-- ====== Screen: For You ====== -->
         <div id="screen-foryou" class="screen-panel">
 
-          <!-- Hero Banner -->
-          <div class="relative" style="height:260px;">
+          <!-- Hero Banner (photo only — festival branding lives in the image itself) -->
+          <div class="relative" style="height:220px;">
             <img id="hero-banner" src="{{BANNER_URL}}" class="absolute inset-0 w-full h-full object-cover" alt="{{NAME}} banner">
-            <div class="absolute inset-0" style="background: linear-gradient(to top, var(--surface) 0%, var(--surface) 5%, transparent 60%);"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-5">
-              <img id="hero-logo" src="{{LOGO_URL}}" alt="{{NAME}} logo" class="h-10 mb-2 object-contain" style="max-width:160px;">
-              <h1 class="font-epilogue font-black text-2xl uppercase gradient-text" style="line-height:0.9; letter-spacing:-0.02em;">{{NAME}}</h1>
-              <p class="font-manrope text-xs mt-2" style="color: var(--on-surface-variant);">{{TAGLINE}}</p>
-              <div class="flex items-center gap-2 mt-2.5 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface-variant);">
-                  <span class="material-symbols-outlined" style="font-size:12px;">calendar_today</span>
-                  <span>{{DATES}}</span>
-                </span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface-variant);">
-                  <span class="material-symbols-outlined" style="font-size:12px;">location_on</span>
-                  <span>{{LOCATION}}</span>
-                </span>
-              </div>
+          </div>
+
+          <!-- Title block on surface (readable regardless of banner content) -->
+          <div class="px-5 pt-4 pb-1 -mt-4 relative" style="background: var(--surface); border-top-left-radius: 16px; border-top-right-radius: 16px;">
+            <h1 class="font-epilogue font-black text-[26px] uppercase" style="line-height:0.95; letter-spacing:-0.02em; color: var(--on-surface);">{{NAME}}</h1>
+            <p class="font-manrope text-xs mt-1.5" style="color: var(--on-surface-variant);">{{TAGLINE}}</p>
+            <div class="flex items-center gap-2 mt-3 flex-wrap">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface);">
+                <span class="material-symbols-outlined" style="font-size:12px; color: var(--primary);">calendar_today</span>
+                <span>{{DATES}}</span>
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface);">
+                <span class="material-symbols-outlined" style="font-size:12px; color: var(--primary);">location_on</span>
+                <span>{{LOCATION}}</span>
+              </span>
             </div>
           </div>
 
@@ -467,23 +467,28 @@
   function derivePalette(primary, background, text) {
     const pHsl = hexToHsl(primary);
     const tHsl = hexToHsl(text);
+    const bgHsl = hexToHsl(background);
+    const isLight = bgHsl.l > 60;
+    // In light mode, containers go DARKER than the surface. In dark mode, lighter.
+    const sign = isLight ? -1 : 1;
+
     return {
       'primary': primary,
-      'primary-container': adjustLightness(primary, -10),
-      'primary-dim': adjustLightness(primary, -30),
+      'primary-container': adjustLightness(primary, isLight ? 10 : -10),
+      'primary-dim': adjustLightness(primary, isLight ? -15 : -30),
       'secondary': shiftHue(primary, -20),
-      'secondary-container': adjustLightness(shiftHue(primary, -20), -20),
-      'tertiary': hslToHex((pHsl.h+180)%360, pHsl.s, 75),
-      'tertiary-container': hslToHex((pHsl.h+180)%360, pHsl.s, 65),
+      'secondary-container': adjustLightness(shiftHue(primary, -20), isLight ? 15 : -20),
+      'tertiary': hslToHex((pHsl.h+180)%360, pHsl.s, isLight ? 45 : 75),
+      'tertiary-container': hslToHex((pHsl.h+180)%360, pHsl.s, isLight ? 35 : 65),
       'surface': background,
-      'surface-bright': adjustLightness(background, 25),
-      'surface-container-low': adjustLightness(background, 5),
-      'surface-container': adjustLightness(background, 10),
-      'surface-container-high': adjustLightness(background, 15),
-      'surface-container-highest': adjustLightness(background, 20),
+      'surface-bright': adjustLightness(background, isLight ? -6 : 25),
+      'surface-container-low': adjustLightness(background, sign * 3),
+      'surface-container': adjustLightness(background, sign * 6),
+      'surface-container-high': adjustLightness(background, sign * 10),
+      'surface-container-highest': adjustLightness(background, sign * 14),
       'on-surface': text,
-      'on-surface-variant': hslToHex(tHsl.h, tHsl.s, 70),
-      'outline-variant': blendColors(background, text, 0.3),
+      'on-surface-variant': hslToHex(tHsl.h, tHsl.s, isLight ? 40 : 70),
+      'outline-variant': blendColors(background, text, isLight ? 0.2 : 0.3),
     };
   }
 
