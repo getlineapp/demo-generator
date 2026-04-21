@@ -148,19 +148,29 @@ const adminIndex = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <style>
-    :root { --ring: #ff8f7a; --muted: rgba(255,255,255,0.55); }
+    :root {
+      --bg: #f7f7f5;
+      --fg: #1a1a1f;
+      --fg-muted: #5a5a66;
+      --fg-dim: #8a8a94;
+      --border: rgba(0,0,0,0.08);
+      --hover: rgba(0,0,0,0.04);
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --chip-bg: rgba(0,0,0,0.06);
+    }
     * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-      background: #0a0a14; color: #f4f4f8;
+      background: var(--bg); color: var(--fg);
       padding: 2rem 1rem;
       max-width: 980px; margin: 0 auto;
       line-height: 1.45;
     }
-    header { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem; margin-bottom: 1.5rem; }
-    h1 { font-size: 1.4rem; margin: 0 0 0.4rem; font-weight: 700; letter-spacing: -0.01em; }
-    .sub { font-size: 0.85rem; color: var(--muted); }
-    .sub code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.5rem; margin: 0 0 0.4rem; font-weight: 700; letter-spacing: -0.01em; color: var(--fg); }
+    .sub { font-size: 0.85rem; color: var(--fg-muted); }
+    .sub code { background: var(--chip-bg); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; color: var(--fg); }
     ol.fest-list { list-style: none; padding: 0; margin: 0; counter-reset: fest; }
     ol.fest-list li {
       counter-increment: fest;
@@ -169,45 +179,45 @@ const adminIndex = `<!DOCTYPE html>
       align-items: center;
       gap: 0.75rem;
       padding: 0.8rem 0.6rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--border);
       transition: background-color 0.15s ease;
     }
-    ol.fest-list li:hover { background: rgba(255,255,255,0.03); }
+    ol.fest-list li:hover { background: var(--hover); }
     ol.fest-list li::before {
       content: counter(fest, decimal-leading-zero);
-      color: var(--muted);
+      color: var(--fg-dim);
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.8rem;
       text-align: right;
     }
     .body { min-width: 0; }
-    .name { font-weight: 600; font-size: 1rem; }
+    .name { font-weight: 600; font-size: 1rem; color: var(--fg); }
     .meta-row {
       display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem;
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--fg-muted);
       margin-top: 0.15rem;
     }
-    .meta-row .dot::before { content: '·'; margin-right: 0.75rem; color: rgba(255,255,255,0.3); }
-    .meta-row a { color: var(--muted); text-decoration: none; }
-    .meta-row a:hover { color: #fff; text-decoration: underline; }
+    .meta-row .dot::before { content: '·'; margin-right: 0.75rem; color: var(--fg-dim); }
+    .meta-row a { color: var(--accent); text-decoration: none; }
+    .meta-row a:hover { text-decoration: underline; }
     .notes {
-      color: rgba(255,255,255,0.35);
+      color: var(--fg-dim);
       font-size: 0.72rem;
       margin-top: 0.25rem;
       font-style: italic;
     }
     .open-btn {
       white-space: nowrap;
-      background: var(--ring);
-      color: #0a0a14;
-      padding: 0.4rem 0.75rem;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.45rem 0.85rem;
       border-radius: 6px;
       text-decoration: none;
       font-weight: 600;
       font-size: 0.82rem;
     }
-    .open-btn:hover { background: #ffb49c; }
+    .open-btn:hover { background: var(--accent-hover); }
     @media (max-width: 640px) {
       ol.fest-list li { grid-template-columns: 1.8rem 1fr; }
       .open-btn { grid-column: 1 / -1; justify-self: start; margin-top: 0.25rem; }

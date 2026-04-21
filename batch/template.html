@@ -401,10 +401,10 @@
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="relative">
         <img id="modal-artist-img" src="" class="w-full h-56 object-cover" alt="">
-        <button onclick="closeArtistModal()" class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center" style="background: rgba(0,0,0,0.55); color: white;">
-          <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+        <div class="absolute inset-0" style="background: linear-gradient(to top, var(--surface) 0%, transparent 60%); pointer-events: none;"></div>
+        <button type="button" onclick="closeArtistModal()" class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center" style="background: rgba(0,0,0,0.55); color: white; z-index: 10;">
+          <span class="material-symbols-outlined" style="font-size:20px; pointer-events: none;">close</span>
         </button>
-        <div class="absolute inset-0" style="background: linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
       </div>
       <div class="px-5 py-4">
         <p id="modal-artist-genre" class="font-manrope text-[10px] uppercase tracking-[2px] font-semibold mb-1" style="color: var(--primary);"></p>
@@ -693,7 +693,10 @@
     document.getElementById('artist-modal').classList.add('open');
   }
   function closeArtistModal(ev) {
-    if (ev && ev.target.closest('.modal-card')) return;
+    // Called from: backdrop onclick (ev=Event), X button onclick (ev=undefined), ESC key (ev=undefined).
+    // Only skip if ev originated from INSIDE the modal-card (i.e. backdrop click was really on the card).
+    // The X button has its own onclick that passes no ev, so it always closes.
+    if (ev && ev.target !== ev.currentTarget) return;
     document.getElementById('artist-modal').classList.remove('open');
   }
   document.addEventListener('keydown', (e) => {
