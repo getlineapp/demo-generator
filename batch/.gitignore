@@ -1,0 +1,14 @@
+node_modules/
+dist/
+data/
+assets/
+enrichments/
+qa-screenshots/
+*.raw.html
+.htpasswd*
+.DS_Store
+
+# Local data & creds — never commit
+config.json
+festivals.json
+outreach.csv

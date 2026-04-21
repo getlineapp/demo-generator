@@ -1,0 +1,11 @@
+{
+  "parentHash": "TBD",
+  "cal_url": "",
+  "mailto_address": "sales@example.com",
+  "mailto_subject_template": "LineApp demo for {{festival}} — let's talk",
+  "deploy": {
+    "host": "s37.zenbox.pl",
+    "user": "pnut",
+    "base_path": "~/domains/demo.getlineapp.com/public_html"
+  }
+}

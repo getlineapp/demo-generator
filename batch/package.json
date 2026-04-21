@@ -1,0 +1,30 @@
+{
+  "name": "lineapp-demo-batch",
+  "version": "0.1.0",
+  "description": "Batch generator for 24 festival sales demo landings (Cocolab / LineApp)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "init-hash": "node scripts/init-hash.mjs",
+    "scrape": "node scraper.mjs",
+    "merge-scraper": "node scripts/merge-scraper.mjs",
+    "build": "node build.mjs",
+    "htpasswd": "node scripts/htpasswd-gen.mjs",
+    "deploy": "bash deploy.sh",
+    "deploy:dry": "bash deploy.sh --dry-run",
+    "qa": "node qa.mjs",
+    "qa:local": "node qa.mjs --local"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "colorthief": "^2.6.0",
+    "p-limit": "^6.1.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

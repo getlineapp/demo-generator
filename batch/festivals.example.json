@@ -1,0 +1,54 @@
+[
+  {
+    "slug": "example-festival",
+    "name": "Example Festival",
+    "tagline": "Short pitch shown under the hero banner",
+    "dates": "5-7 July 2026",
+    "location": "City, Country",
+    "country": "PL",
+    "website": "https://examplefestival.example",
+    "contactEmail": "contact@example.com",
+    "contactName": "Contact Person",
+    "tier": "shortlist",
+    "primaryColor": "#ff8f7a",
+    "backgroundColor": "#240306",
+    "textColor": "#ffdede",
+    "logoPath": "assets/example-festival/logo.png",
+    "bannerPath": "assets/example-festival/banner.jpg",
+    "artists": [
+      {
+        "name": "Headliner Name",
+        "genre": "indie rock",
+        "day": "2026-07-05",
+        "time": "21:00",
+        "stage": "Main Stage",
+        "image": null,
+        "bio": "One-sentence bio."
+      }
+    ],
+    "schedule": [
+      {
+        "label": "Day 1",
+        "date": "2026-07-05",
+        "events": [
+          {"time": "18:00", "stage": "Main Stage", "artist": "Opening Act"},
+          {"time": "21:00", "stage": "Main Stage", "artist": "Headliner"}
+        ]
+      }
+    ],
+    "venue": {
+      "name": "Venue Name",
+      "address": "Street, City",
+      "lat": null,
+      "lng": null,
+      "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Venue+Name"
+    },
+    "tickets": null,
+    "faqs": [
+      {"q": "Where to buy tickets?", "a": "On the festival website."},
+      {"q": "What are the hours?", "a": "Gates open at 12:00."}
+    ],
+    "scraping_status": "ok",
+    "notes": "Free-form notes — sources used, quirks, sales context."
+  }
+]

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NAME}} — Your festival app preview</title>
+  <meta name="description" content="A personalised LineApp preview for {{NAME}} — see how your festival could feel in an official app.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <meta property="og:title" content="{{NAME}} — Your festival app preview">
+  <meta property="og:description" content="A personalised LineApp preview for {{NAME}}.">
+  <meta property="og:type" content="website">
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            epilogue: ['Epilogue', 'sans-serif'],
+            manrope: ['Manrope', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* Page layout */
+    html, body { height: 100%; }
+    body {
+      background: radial-gradient(ellipse at center top, #1a1a2e 0%, #0a0a14 60%, #000 100%);
+      font-family: 'Manrope', sans-serif;
+      color: #fff;
+    }
+    .stage {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    @media (min-width: 768px) {
+      .stage { padding: 4rem 2rem; }
+    }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 375px;
+      height: 812px;
+      border-radius: 44px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 40px 120px -20px rgba(0,0,0,0.8), 0 0 0 10px rgba(255,255,255,0.04), 0 0 80px -10px var(--primary, #ff8f7a);
+    }
+
+    .dynamic-island {
+      width: 120px;
+      height: 34px;
+      background: #000;
+      border-radius: 20px;
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+
+    .nav-glass {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .tab-active-pill {
+      background: linear-gradient(135deg, var(--primary), var(--primary-container));
+    }
+
+    /* Scrollbars */
+    .phone-scroll::-webkit-scrollbar { width: 3px; }
+    .phone-scroll::-webkit-scrollbar-track { background: transparent; }
+    .phone-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+    .phone-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; scroll-behavior: smooth; }
+    .hscroll::-webkit-scrollbar { height: 0; display: none; }
+    .hscroll { scrollbar-width: none; }
+
+    /* Screens */
+    .screen-panel { display: block; }
+    .screen-panel.hidden { display: none; }
+
+    /* FAQ */
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+    .faq-answer.open { max-height: 400px; }
+
+    /* Schedule */
+    .schedule-events { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .schedule-events.open { max-height: 800px; }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary), var(--primary-container));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Phone frame CSS custom properties (defaults) */
+    .phone-frame {
+      --primary: #ff8f7a;
+      --primary-container: #ff775f;
+      --primary-dim: #db341c;
+      --secondary: #ff6e85;
+      --secondary-container: #bd0042;
+      --tertiary: #e1a9ff;
+      --tertiary-container: #d996fe;
+      --surface: #240306;
+      --surface-bright: #52171e;
+      --surface-container-low: #2c050a;
+      --surface-container: #36090f;
+      --surface-container-high: #3f0d14;
+      --surface-container-highest: #491219;
+      --on-surface: #ffdede;
+      --on-surface-variant: #dc9a9d;
+      --outline-variant: #6c393d;
+    }
+
+    /* Clickable feedback */
+    .clickable { cursor: pointer; transition: transform 0.15s ease, opacity 0.15s ease; }
+    .clickable:active { transform: scale(0.97); opacity: 0.85; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-backdrop.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    .modal-card {
+      max-width: 360px; width: 100%;
+      background: var(--surface, #240306);
+      border-radius: 24px;
+      overflow: hidden;
+      color: var(--on-surface, #ffdede);
+      animation: rise 0.25s ease;
+    }
+    @keyframes rise { from { transform: translateY(16px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+    /* Header/footer labels */
+    .sidecard {
+      position: absolute;
+      color: rgba(255,255,255,0.35);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    @media (max-width: 820px) {
+      .sidecard { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="stage">
+
+    <div class="sidecard" style="top: 2rem; left: 2rem;">LineApp preview · built for <span style="color: rgba(255,255,255,0.6);">{{NAME}}</span></div>
+    <div class="sidecard" style="bottom: 2rem; right: 2rem;">powered by Cocolab</div>
+
+    <div class="phone-frame" id="phone" style="background: var(--surface);">
+
+      <div class="dynamic-island"></div>
+
+      <!-- Status Bar -->
+      <div class="relative z-40 flex items-center justify-between px-8 pt-[14px] pb-1" style="color: var(--on-surface);">
+        <span class="text-xs font-semibold font-manrope">9:41</span>
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined" style="font-size:14px;">wifi</span>
+          <span class="material-symbols-outlined" style="font-size:14px;">signal_cellular_alt</span>
+          <span class="material-symbols-outlined" style="font-size:14px;">battery_full</span>
+        </div>
+      </div>
+
+      <!-- Content Viewport -->
+      <div id="phone-content" class="phone-scroll absolute inset-0 overflow-y-auto" style="top:48px; bottom:0; padding-bottom:34px;">
+
+        <!-- ====== Screen: For You ====== -->
+        <div id="screen-foryou" class="screen-panel">
+
+          <!-- Hero Banner -->
+          <div class="relative" style="height:260px;">
+            <img id="hero-banner" src="{{BANNER_URL}}" class="absolute inset-0 w-full h-full object-cover" alt="{{NAME}} banner">
+            <div class="absolute inset-0" style="background: linear-gradient(to top, var(--surface) 0%, var(--surface) 5%, transparent 60%);"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-5">
+              <img id="hero-logo" src="{{LOGO_URL}}" alt="{{NAME}} logo" class="h-10 mb-2 object-contain" style="max-width:160px;">
+              <h1 class="font-epilogue font-black text-2xl uppercase gradient-text" style="line-height:0.9; letter-spacing:-0.02em;">{{NAME}}</h1>
+              <p class="font-manrope text-xs mt-2" style="color: var(--on-surface-variant);">{{TAGLINE}}</p>
+              <div class="flex items-center gap-2 mt-2.5 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface-variant);">
+                  <span class="material-symbols-outlined" style="font-size:12px;">calendar_today</span>
+                  <span>{{DATES}}</span>
+                </span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-high); color: var(--on-surface-variant);">
+                  <span class="material-symbols-outlined" style="font-size:12px;">location_on</span>
+                  <span>{{LOCATION}}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOW & NEXT -->
+          <div class="px-5 mt-4">
+            <p class="font-manrope text-[9px] uppercase tracking-[2px] font-semibold mb-3" style="color: var(--on-surface-variant);">Now &amp; Next</p>
+            <div id="now-next-list" class="hscroll flex gap-3 overflow-x-auto pb-2"></div>
+          </div>
+
+          <!-- FESTIVAL TOOLS Grid -->
+          <div class="px-5 mt-6">
+            <p class="font-manrope text-[9px] uppercase tracking-[2px] font-semibold mb-3" style="color: var(--on-surface-variant);">Festival Tools</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div onclick="switchTab('map')" class="clickable flex items-center gap-3 p-3 rounded-xl" style="background: var(--surface-container-low);">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--surface-container-high);"><span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">map</span></div>
+                <span class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">Map</span>
+              </div>
+              <div onclick="switchTab('info')" class="clickable flex items-center gap-3 p-3 rounded-xl" style="background: var(--surface-container-low);">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--surface-container-high);"><span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">shield</span></div>
+                <span class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">Safety</span>
+              </div>
+              <div onclick="switchTab('info')" class="clickable flex items-center gap-3 p-3 rounded-xl" style="background: var(--surface-container-low);">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--surface-container-high);"><span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">restaurant</span></div>
+                <span class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">Food</span>
+              </div>
+              <div onclick="switchTab('info')" class="clickable flex items-center gap-3 p-3 rounded-xl" style="background: var(--surface-container-low);">
+                <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background: var(--surface-container-high);"><span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">info</span></div>
+                <span class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">Info</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:100px;"></div>
+        </div>
+
+        <!-- ====== Screen: Lineup ====== -->
+        <div id="screen-lineup" class="screen-panel hidden">
+          <div class="px-5 pt-4">
+            <h2 class="font-epilogue font-black text-[22px] uppercase" style="color: var(--on-surface); line-height:0.9; letter-spacing:-0.02em;">Lineup</h2>
+
+            <!-- Search (decorative) -->
+            <div class="flex items-center gap-2.5 mt-4 px-3.5 py-2.5 rounded-xl" style="background: var(--surface-container-low);">
+              <span class="material-symbols-outlined" style="font-size:18px; color: var(--on-surface-variant);">search</span>
+              <span class="font-manrope text-xs" style="color: var(--on-surface-variant); opacity:0.6;">Search artists…</span>
+            </div>
+
+            <!-- Genre chips -->
+            <div id="genre-chips" class="hscroll flex gap-2 overflow-x-auto mt-3 pb-1"></div>
+
+            <!-- Full Lineup -->
+            <div id="full-lineup" class="flex flex-col gap-2 mt-4"></div>
+          </div>
+          <div style="height:100px;"></div>
+        </div>
+
+        <!-- ====== Screen: Map ====== -->
+        <div id="screen-map" class="screen-panel hidden">
+          <div class="px-5 pt-4">
+            <h2 class="font-epilogue font-black text-[22px] uppercase" style="color: var(--on-surface); line-height:0.9; letter-spacing:-0.02em;">Map</h2>
+
+            <!-- Filter Chips -->
+            <div class="hscroll flex gap-2 overflow-x-auto mt-4 pb-1">
+              <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope" style="background: linear-gradient(135deg, var(--primary), var(--primary-container)); color: var(--surface);">All</span>
+              <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-low); color: var(--on-surface-variant);">Stages</span>
+              <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-low); color: var(--on-surface-variant);">Food</span>
+              <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-low); color: var(--on-surface-variant);">WC</span>
+              <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope" style="background: var(--surface-container-low); color: var(--on-surface-variant);">Safety</span>
+            </div>
+
+            <!-- Venue/SVG Map -->
+            <div id="venue-map" class="mt-4 rounded-xl overflow-hidden clickable" style="background: var(--surface-container-low);">
+              <!-- Filled by JS: either real map link or default SVG -->
+            </div>
+
+            <!-- Venue info -->
+            <div id="venue-info" class="mt-3"></div>
+
+            <!-- Points of Interest -->
+            <div class="mt-5">
+              <p class="font-manrope text-[9px] uppercase tracking-[2px] font-semibold mb-3" style="color: var(--on-surface-variant);">Points of Interest</p>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background: var(--surface-container-low);">
+                  <span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">music_note</span>
+                  <span class="font-manrope text-xs font-semibold flex-1" style="color: var(--on-surface);">Main Stage</span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-manrope font-medium" style="background: var(--surface-container-high); color: var(--on-surface-variant);">Stage</span>
+                </div>
+                <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background: var(--surface-container-low);">
+                  <span class="material-symbols-outlined" style="font-size:18px; color: var(--primary);">restaurant</span>
+                  <span class="font-manrope text-xs font-semibold flex-1" style="color: var(--on-surface);">Food Court</span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-manrope font-medium" style="background: var(--surface-container-high); color: var(--on-surface-variant);">Food</span>
+                </div>
+                <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background: var(--surface-container-low);">
+                  <span class="material-symbols-outlined" style="font-size:18px; color: #ff6b6b;">local_hospital</span>
+                  <span class="font-manrope text-xs font-semibold flex-1" style="color: var(--on-surface);">First Aid</span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-manrope font-medium" style="background: var(--surface-container-high); color: var(--on-surface-variant);">Safety</span>
+                </div>
+                <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background: var(--surface-container-low);">
+                  <span class="material-symbols-outlined" style="font-size:18px; color: var(--on-surface-variant);">local_parking</span>
+                  <span class="font-manrope text-xs font-semibold flex-1" style="color: var(--on-surface);">Parking</span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-manrope font-medium" style="background: var(--surface-container-high); color: var(--on-surface-variant);">Transport</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height:100px;"></div>
+        </div>
+
+        <!-- ====== Screen: Info ====== -->
+        <div id="screen-info" class="screen-panel hidden">
+          <div class="px-5 pt-4">
+            <h2 class="font-epilogue font-black text-[22px] uppercase" style="color: var(--on-surface); line-height:0.9; letter-spacing:-0.02em;">Info</h2>
+
+            <!-- Schedule -->
+            <div class="mt-4">
+              <p class="font-manrope text-[9px] uppercase tracking-[2px] font-semibold mb-3" style="color: var(--on-surface-variant);">Schedule</p>
+              <div id="schedule-list" class="flex flex-col gap-2"></div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="mt-6">
+              <p class="font-manrope text-[9px] uppercase tracking-[2px] font-semibold mb-3" style="color: var(--on-surface-variant);">FAQ</p>
+              <div id="faq-list" class="flex flex-col gap-2"></div>
+            </div>
+
+            <!-- CTA -->
+            <section id="cta-block" class="mt-8 -mx-5 px-5 pb-6 pt-6" style="background: var(--surface-container-low);">
+              <h3 class="font-epilogue font-extrabold text-lg mb-2" style="color: var(--on-surface);">Like what you see?</h3>
+              <p class="font-manrope text-xs opacity-80 mb-4" style="color: var(--on-surface);">
+                This preview is hand-built for <strong>{{NAME}}</strong>. The real app can look even sharper — with your tickets, your schedule, your audience. Let's talk.
+              </p>
+              <div class="flex flex-col gap-2">
+                <a id="cta-cal" href="{{CAL_URL}}" target="_blank" rel="noopener"
+                   class="block text-center py-3 px-4 rounded-xl font-manrope font-bold text-sm"
+                   style="background: linear-gradient(135deg, var(--primary), var(--primary-container)); color: var(--surface);">
+                  <span class="material-symbols-outlined align-middle" style="font-size:16px; margin-right:4px;">calendar_month</span>
+                  Book a call
+                </a>
+                <a id="cta-mail" href="{{MAILTO_HREF}}"
+                   class="block text-center py-3 px-4 rounded-xl font-manrope font-bold text-sm border-2"
+                   style="border-color: var(--primary); color: var(--primary); background: transparent;">
+                  <span class="material-symbols-outlined align-middle" style="font-size:16px; margin-right:4px;">mail</span>
+                  Email us
+                </a>
+              </div>
+              <p class="font-manrope text-[10px] mt-4 opacity-50" style="color: var(--on-surface);">
+                Built by Cocolab · LineApp
+              </p>
+            </section>
+
+          </div>
+          <div style="height:100px;"></div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Tab Navigation -->
+      <div class="nav-glass absolute bottom-0 left-0 right-0 z-40" style="background: rgba(36, 3, 6, 0.8); padding-bottom:34px;">
+        <div class="flex items-center justify-around px-2 pt-2 pb-1">
+          <button onclick="switchTab('foryou')" id="tab-foryou" class="tab-btn flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl transition-all duration-200" data-tab="foryou">
+            <span class="material-symbols-outlined tab-icon" style="font-size:22px;">sensors</span>
+            <span class="tab-label font-manrope text-[9px] uppercase" style="letter-spacing:0.08em;">For You</span>
+          </button>
+          <button onclick="switchTab('lineup')" id="tab-lineup" class="tab-btn flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl transition-all duration-200" data-tab="lineup">
+            <span class="material-symbols-outlined tab-icon" style="font-size:22px;">theater_comedy</span>
+            <span class="tab-label font-manrope text-[9px] uppercase" style="letter-spacing:0.08em;">Lineup</span>
+          </button>
+          <button onclick="switchTab('map')" id="tab-map" class="tab-btn flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl transition-all duration-200" data-tab="map">
+            <span class="material-symbols-outlined tab-icon" style="font-size:22px;">map</span>
+            <span class="tab-label font-manrope text-[9px] uppercase" style="letter-spacing:0.08em;">Map</span>
+          </button>
+          <button onclick="switchTab('info')" id="tab-info" class="tab-btn flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl transition-all duration-200" data-tab="info">
+            <span class="material-symbols-outlined tab-icon" style="font-size:22px;">info</span>
+            <span class="tab-label font-manrope text-[9px] uppercase" style="letter-spacing:0.08em;">Info</span>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /phone-frame -->
+
+  </div><!-- /stage -->
+
+  <!-- Artist Modal -->
+  <div id="artist-modal" class="modal-backdrop" onclick="closeArtistModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="relative">
+        <img id="modal-artist-img" src="" class="w-full h-56 object-cover" alt="">
+        <button onclick="closeArtistModal()" class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center" style="background: rgba(0,0,0,0.55); color: white;">
+          <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+        </button>
+        <div class="absolute inset-0" style="background: linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+      </div>
+      <div class="px-5 py-4">
+        <p id="modal-artist-genre" class="font-manrope text-[10px] uppercase tracking-[2px] font-semibold mb-1" style="color: var(--primary);"></p>
+        <h3 id="modal-artist-name" class="font-epilogue font-black text-2xl" style="color: var(--on-surface);"></h3>
+        <p id="modal-artist-day" class="font-manrope text-xs mt-1" style="color: var(--on-surface-variant);"></p>
+        <p id="modal-artist-bio" class="font-manrope text-sm mt-3 opacity-90" style="color: var(--on-surface);"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline data (filled by build.mjs) -->
+  <script type="application/json" id="festival-data">{{FESTIVAL_JSON}}</script>
+  <script type="application/json" id="config-data">{{CONFIG_JSON}}</script>
+
+  <script>
+  // ==========================================
+  // Color derivation (from original index.html)
+  // ==========================================
+  function hexToHsl(hex) {
+    hex = hex.replace('#','');
+    const r = parseInt(hex.substring(0,2),16)/255;
+    const g = parseInt(hex.substring(2,4),16)/255;
+    const b = parseInt(hex.substring(4,6),16)/255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h, s, l = (max+min)/2;
+    if (max===min) { h = s = 0; }
+    else {
+      const d = max-min;
+      s = l>0.5 ? d/(2-max-min) : d/(max+min);
+      switch (max) {
+        case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+        case g: h = ((b-r)/d + 2)/6; break;
+        case b: h = ((r-g)/d + 4)/6; break;
+      }
+    }
+    return { h: h*360, s: s*100, l: l*100 };
+  }
+  function hslToHex(h,s,l) {
+    h = ((h%360)+360)%360;
+    s = Math.max(0, Math.min(100, s));
+    l = Math.max(0, Math.min(100, l));
+    const sN = s/100, lN = l/100;
+    const c = (1 - Math.abs(2*lN - 1)) * sN;
+    const x = c * (1 - Math.abs((h/60)%2 - 1));
+    const m = lN - c/2;
+    let r,g,b;
+    if (h<60)       { r=c; g=x; b=0; }
+    else if (h<120) { r=x; g=c; b=0; }
+    else if (h<180) { r=0; g=c; b=x; }
+    else if (h<240) { r=0; g=x; b=c; }
+    else if (h<300) { r=x; g=0; b=c; }
+    else            { r=c; g=0; b=x; }
+    const toHex = (v) => { const hh = Math.round((v+m)*255).toString(16); return hh.length===1 ? '0'+hh : hh; };
+    return '#' + toHex(r) + toHex(g) + toHex(b);
+  }
+  function adjustLightness(hex, amt) { const hsl = hexToHsl(hex); return hslToHex(hsl.h, hsl.s, hsl.l+amt); }
+  function shiftHue(hex, deg) { const hsl = hexToHsl(hex); return hslToHex(hsl.h+deg, hsl.s, hsl.l); }
+  function blendColors(h1, h2, r) { const a=hexToHsl(h1), b=hexToHsl(h2); return hslToHex(a.h+(b.h-a.h)*r, a.s+(b.s-a.s)*r, a.l+(b.l-a.l)*r); }
+
+  function derivePalette(primary, background, text) {
+    const pHsl = hexToHsl(primary);
+    const tHsl = hexToHsl(text);
+    return {
+      'primary': primary,
+      'primary-container': adjustLightness(primary, -10),
+      'primary-dim': adjustLightness(primary, -30),
+      'secondary': shiftHue(primary, -20),
+      'secondary-container': adjustLightness(shiftHue(primary, -20), -20),
+      'tertiary': hslToHex((pHsl.h+180)%360, pHsl.s, 75),
+      'tertiary-container': hslToHex((pHsl.h+180)%360, pHsl.s, 65),
+      'surface': background,
+      'surface-bright': adjustLightness(background, 25),
+      'surface-container-low': adjustLightness(background, 5),
+      'surface-container': adjustLightness(background, 10),
+      'surface-container-high': adjustLightness(background, 15),
+      'surface-container-highest': adjustLightness(background, 20),
+      'on-surface': text,
+      'on-surface-variant': hslToHex(tHsl.h, tHsl.s, 70),
+      'outline-variant': blendColors(background, text, 0.3),
+    };
+  }
+
+  function applyPalette(pal) {
+    const phone = document.getElementById('phone');
+    for (const [k,v] of Object.entries(pal)) {
+      phone.style.setProperty('--'+k, v);
+    }
+    const nav = phone.querySelector('.nav-glass');
+    if (nav) {
+      const hsl = hexToHsl(pal['surface']);
+      nav.style.background = `hsla(${hsl.h}, ${hsl.s}%, ${hsl.l}%, 0.8)`;
+    }
+  }
+
+  // ==========================================
+  // Data
+  // ==========================================
+  const FEST = JSON.parse(document.getElementById('festival-data').textContent);
+  const CFG = JSON.parse(document.getElementById('config-data').textContent);
+
+  // Apply palette
+  if (FEST.primaryColor && FEST.backgroundColor && FEST.textColor) {
+    applyPalette(derivePalette(FEST.primaryColor, FEST.backgroundColor, FEST.textColor));
+  }
+
+  // ==========================================
+  // Render: Now & Next (take up to 3 artists)
+  // ==========================================
+  const nowNextEl = document.getElementById('now-next-list');
+  const artists = FEST.artists || [];
+  const preview3 = artists.slice(0, Math.min(artists.length, 6));
+  if (preview3.length === 0) {
+    nowNextEl.innerHTML = `<p class="font-manrope text-[11px]" style="color: var(--on-surface-variant); opacity:0.6;">Lineup announced soon.</p>`;
+  } else {
+    nowNextEl.innerHTML = preview3.map((a,i) => `
+      <div class="clickable flex-shrink-0 rounded-xl overflow-hidden" style="width:140px; background: var(--surface-container-low);" onclick="openArtistModal(${i})">
+        <img src="${a.image || fallbackArtistImg(a.name)}" class="w-full h-[90px] object-cover" alt="${escapeHtml(a.name)}">
+        <div class="p-2.5">
+          <p class="font-manrope text-xs font-bold truncate" style="color: var(--on-surface);">${escapeHtml(a.name)}</p>
+          ${a.genre ? `<span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-manrope font-medium" style="background: var(--surface-container-high); color: var(--on-surface-variant);">${escapeHtml(a.genre)}</span>` : ''}
+          ${a.time && a.stage ? `<p class="text-[10px] mt-1.5 font-manrope" style="color: var(--on-surface-variant);">${escapeHtml(a.time)} · ${escapeHtml(a.stage)}</p>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // Render: Full Lineup + Genre Chips
+  // ==========================================
+  const lineupEl = document.getElementById('full-lineup');
+  const genreChipsEl = document.getElementById('genre-chips');
+
+  const genres = ['All', ...new Set(artists.map(a => a.genre).filter(Boolean))].slice(0, 7);
+  genreChipsEl.innerHTML = genres.map((g, i) => `
+    <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold font-manrope cursor-pointer"
+          style="background: ${i===0 ? 'linear-gradient(135deg, var(--primary), var(--primary-container))' : 'var(--surface-container-low)'}; color: ${i===0 ? 'var(--surface)' : 'var(--on-surface-variant)'};">${escapeHtml(g)}</span>
+  `).join('');
+
+  if (artists.length === 0) {
+    lineupEl.innerHTML = `<p class="font-manrope text-xs py-4" style="color: var(--on-surface-variant); opacity:0.6;">Full lineup coming soon.</p>`;
+  } else {
+    lineupEl.innerHTML = artists.map((a, i) => `
+      <div onclick="openArtistModal(${i})" class="clickable flex items-center gap-3 p-2 rounded-xl" style="background: var(--surface-container-low);">
+        <img src="${a.image || fallbackArtistImg(a.name)}" class="w-11 h-11 rounded-lg object-cover flex-shrink-0" alt="${escapeHtml(a.name)}">
+        <div class="flex-1 min-w-0">
+          <p class="font-manrope text-[13px] font-bold truncate" style="color: var(--on-surface);">${escapeHtml(a.name)}</p>
+          ${a.genre ? `<p class="font-manrope text-[10px]" style="color: var(--on-surface-variant);">${escapeHtml(a.genre)}</p>` : ''}
+        </div>
+        ${a.time || a.stage ? `
+          <div class="text-right flex-shrink-0">
+            ${a.time ? `<p class="font-manrope text-[10px] font-semibold" style="color: var(--on-surface-variant);">${escapeHtml(a.time)}</p>` : ''}
+            ${a.stage ? `<p class="font-manrope text-[10px]" style="color: var(--on-surface-variant); opacity:0.7;">${escapeHtml(a.stage)}</p>` : ''}
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // Render: Venue / Map
+  // ==========================================
+  const mapEl = document.getElementById('venue-map');
+  const venueInfoEl = document.getElementById('venue-info');
+  const venue = FEST.venue;
+
+  mapEl.innerHTML = defaultMapSvg();
+  if (venue && venue.mapsUrl) {
+    mapEl.setAttribute('onclick', `window.open(${JSON.stringify(venue.mapsUrl)}, '_blank', 'noopener')`);
+  } else {
+    mapEl.removeAttribute('onclick');
+    mapEl.classList.remove('clickable');
+  }
+
+  if (venue && (venue.name || venue.address)) {
+    venueInfoEl.innerHTML = `
+      <div class="flex items-start gap-3 p-3 rounded-xl" style="background: var(--surface-container-low);">
+        <span class="material-symbols-outlined flex-shrink-0 mt-0.5" style="font-size:20px; color: var(--primary);">location_on</span>
+        <div class="flex-1 min-w-0">
+          ${venue.name ? `<p class="font-manrope text-[13px] font-bold" style="color: var(--on-surface);">${escapeHtml(venue.name)}</p>` : ''}
+          ${venue.address ? `<p class="font-manrope text-[11px] mt-0.5" style="color: var(--on-surface-variant);">${escapeHtml(venue.address)}</p>` : ''}
+        </div>
+        ${venue.mapsUrl ? `
+          <a href="${escapeHtml(venue.mapsUrl)}" target="_blank" rel="noopener"
+             class="flex-shrink-0 self-center px-3 py-1.5 rounded-full text-[10px] font-manrope font-semibold"
+             style="background: var(--primary); color: var(--surface);">Open</a>` : ''}
+      </div>
+    `;
+  } else {
+    venueInfoEl.innerHTML = `<p class="font-manrope text-[11px] opacity-60 px-1 mt-2" style="color: var(--on-surface-variant);">Location TBA</p>`;
+  }
+
+  // ==========================================
+  // Render: Schedule
+  // ==========================================
+  const scheduleEl = document.getElementById('schedule-list');
+  const schedule = FEST.schedule || [];
+  if (schedule.length === 0) {
+    scheduleEl.innerHTML = `<p class="font-manrope text-[11px] opacity-60" style="color: var(--on-surface-variant);">Schedule coming soon.</p>`;
+  } else {
+    scheduleEl.innerHTML = schedule.map((day, i) => `
+      <div class="rounded-xl overflow-hidden" style="background: var(--surface-container-low);">
+        <button onclick="toggleSchedule(${i})" class="w-full flex items-center justify-between p-3 text-left">
+          <div>
+            <p class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">${escapeHtml(day.label || day.day || 'Day ' + (i+1))}</p>
+            ${day.date ? `<p class="font-manrope text-[10px] mt-0.5" style="color: var(--on-surface-variant);">${escapeHtml(day.date)}</p>` : ''}
+          </div>
+          <span class="material-symbols-outlined schedule-icon transition-transform duration-300" data-schedule-icon="${i}" style="font-size:18px; color: var(--on-surface-variant);">keyboard_arrow_down</span>
+        </button>
+        <div class="schedule-events px-3" data-schedule-events="${i}">
+          <div class="flex flex-col gap-1 pb-3">
+            ${(day.events || []).map(e => `
+              <div class="flex items-center gap-2">
+                ${e.time ? `<span class="font-manrope text-[10px] font-semibold w-10" style="color: var(--primary);">${escapeHtml(e.time)}</span>` : ''}
+                <span class="font-manrope text-[11px] flex-1" style="color: var(--on-surface);">${escapeHtml(e.artist || e.title || '')}</span>
+                ${e.stage ? `<span class="font-manrope text-[9px] opacity-70" style="color: var(--on-surface-variant);">${escapeHtml(e.stage)}</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // Render: FAQ
+  // ==========================================
+  const faqEl = document.getElementById('faq-list');
+  const faqs = (FEST.faqs && FEST.faqs.length) ? FEST.faqs : defaultFaqs();
+  faqEl.innerHTML = faqs.map((f, i) => `
+    <div class="rounded-xl overflow-hidden" style="background: var(--surface-container-low);">
+      <button onclick="toggleFaq(${i})" class="w-full flex items-center justify-between p-3 text-left gap-3">
+        <span class="font-manrope text-xs font-semibold" style="color: var(--on-surface);">${escapeHtml(f.q)}</span>
+        <span class="material-symbols-outlined faq-icon transition-transform duration-300" data-faq-icon="${i}" style="font-size:18px; color: var(--on-surface-variant);">keyboard_arrow_down</span>
+      </button>
+      <div class="faq-answer px-3" data-faq-answer="${i}">
+        <p class="font-manrope text-[11px] pb-3" style="color: var(--on-surface-variant);">${escapeHtml(f.a)}</p>
+      </div>
+    </div>
+  `).join('');
+
+  // ==========================================
+  // Tab Navigation
+  // ==========================================
+  let activeTab = 'foryou';
+  function switchTab(id) {
+    activeTab = id;
+    document.querySelectorAll('.screen-panel').forEach(p => p.classList.add('hidden'));
+    const target = document.getElementById('screen-' + id);
+    if (target) target.classList.remove('hidden');
+    const content = document.getElementById('phone-content');
+    if (content) content.scrollTop = 0;
+    updateTabStyles();
+  }
+  function updateTabStyles() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const id = btn.dataset.tab;
+      const icon = btn.querySelector('.tab-icon');
+      const label = btn.querySelector('.tab-label');
+      if (id === activeTab) {
+        btn.classList.add('tab-active-pill');
+        icon.style.color = 'var(--surface)';
+        label.style.color = 'var(--surface)';
+        icon.style.fontVariationSettings = "'FILL' 1";
+        label.style.opacity = '1';
+      } else {
+        btn.classList.remove('tab-active-pill');
+        icon.style.color = 'var(--on-surface)';
+        label.style.color = 'var(--on-surface)';
+        icon.style.fontVariationSettings = "'FILL' 0";
+        label.style.opacity = '0.5';
+      }
+    });
+  }
+
+  // ==========================================
+  // Artist Modal
+  // ==========================================
+  function openArtistModal(i) {
+    const a = artists[i];
+    if (!a) return;
+    document.getElementById('modal-artist-img').src = a.image || fallbackArtistImg(a.name);
+    document.getElementById('modal-artist-name').textContent = a.name;
+    document.getElementById('modal-artist-genre').textContent = a.genre || '';
+    document.getElementById('modal-artist-day').textContent = [a.day, a.time, a.stage].filter(Boolean).join(' · ');
+    document.getElementById('modal-artist-bio').textContent = a.bio || 'Bio coming soon — we are still polishing the story.';
+    document.getElementById('artist-modal').classList.add('open');
+  }
+  function closeArtistModal(ev) {
+    if (ev && ev.target.closest('.modal-card')) return;
+    document.getElementById('artist-modal').classList.remove('open');
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeArtistModal();
+  });
+
+  // ==========================================
+  // Schedule + FAQ toggles
+  // ==========================================
+  function toggleFaq(i) {
+    const ans = document.querySelector(`[data-faq-answer="${i}"]`);
+    const icon = document.querySelector(`[data-faq-icon="${i}"]`);
+    if (!ans) return;
+    ans.classList.toggle('open');
+    icon.style.transform = ans.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+  function toggleSchedule(i) {
+    const events = document.querySelector(`[data-schedule-events="${i}"]`);
+    const icon = document.querySelector(`[data-schedule-icon="${i}"]`);
+    if (!events) return;
+    events.classList.toggle('open');
+    icon.style.transform = events.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
+
+  // ==========================================
+  // Helpers
+  // ==========================================
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function fallbackArtistImg(name) {
+    const seed = encodeURIComponent((name || 'artist').replace(/\s+/g, '-').toLowerCase());
+    return `https://picsum.photos/seed/${seed}/280/200`;
+  }
+  function defaultFaqs() {
+    return [
+      { q: 'What are the festival hours?', a: 'Gates open each day — full schedule in the app.' },
+      { q: 'Can I bring my own food?', a: 'Small snacks are allowed. No glass bottles or large coolers.' },
+      { q: 'Where is first aid?', a: 'First aid stations are near each stage. Look for red cross markers on the map.' },
+    ];
+  }
+  function defaultMapSvg() {
+    return `
+      <svg viewBox="0 0 335 240" xmlns="http://www.w3.org/2000/svg" class="w-full" style="height:240px;">
+        <rect x="10" y="10" width="315" height="220" rx="16" fill="var(--surface-container)" />
+        <line x1="167" y1="30" x2="167" y2="210" stroke="var(--outline-variant)" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+        <line x1="30" y1="120" x2="305" y2="120" stroke="var(--outline-variant)" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+        <rect x="30" y="35" width="110" height="55" rx="8" fill="var(--surface-container-high)" />
+        <text x="85" y="58" text-anchor="middle" fill="var(--primary)" font-family="Manrope" font-size="8" font-weight="700">MAIN STAGE</text>
+        <rect x="55" y="65" width="60" height="3" rx="1.5" fill="var(--primary)" opacity="0.5" />
+        <rect x="195" y="35" width="100" height="50" rx="8" fill="var(--surface-container-high)" />
+        <text x="245" y="56" text-anchor="middle" fill="var(--primary)" font-family="Manrope" font-size="7" font-weight="700">SECOND STAGE</text>
+        <rect x="220" y="63" width="50" height="3" rx="1.5" fill="var(--primary)" opacity="0.5" />
+        <rect x="100" y="145" width="130" height="60" rx="10" fill="var(--surface-container-high)" />
+        <text x="165" y="172" text-anchor="middle" fill="var(--primary)" font-family="Manrope" font-size="9" font-weight="700">ARENA</text>
+        <rect x="135" y="180" width="60" height="3" rx="1.5" fill="var(--primary)" opacity="0.5" />
+        <circle cx="55" cy="135" r="6" fill="var(--primary)" opacity="0.9" />
+        <circle cx="280" cy="135" r="6" fill="var(--primary)" opacity="0.9" />
+        <circle cx="167" cy="105" r="6" fill="#ff4444" opacity="0.9" />
+        <rect x="140" y="215" width="55" height="12" rx="4" fill="var(--primary)" opacity="0.3" />
+        <text x="167" y="224" text-anchor="middle" fill="var(--on-surface)" font-family="Manrope" font-size="7" font-weight="600">ENTRANCE</text>
+      </svg>
+    `;
+  }
+
+  // ==========================================
+  // Init
+  // ==========================================
+  switchTab('foryou');
+
+  // CTA: fallback if cal_url not filled, hide Book button
+  const cta = document.getElementById('cta-cal');
+  if (cta && (!CFG.cal_url || CFG.cal_url === '' || CFG.cal_url === '#')) {
+    cta.style.display = 'none';
+  }
+  </script>
+</body>
+</html>

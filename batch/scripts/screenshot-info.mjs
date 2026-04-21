@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+import { resolve } from 'node:path';
+const browser = await chromium.launch();
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+await page.goto('file://' + resolve('dist/e8e1b9ed6c79/malta-festival/index.html'), { waitUntil: 'load' });
+await page.waitForTimeout(500);
+await page.locator('#tab-info').click();
+await page.waitForTimeout(400);
+await page.evaluate(() => document.getElementById('phone-content').scrollTo(0, 99999));
+await page.waitForTimeout(600);
+await page.screenshot({ path: 'qa-screenshots/malta-festival-info-cta.png' });
+await browser.close();
+console.log('ok');
